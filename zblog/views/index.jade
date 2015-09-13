@@ -1,0 +1,15 @@
+extends layout
+
+block content
+  div.container-fluid.header
+    h1="酌酒花间"
+    h5="即行即景，"
+    h5="且行且思"
+    a(href="/blog/new") Write Blog
+  </nav>
+  div.container
+    each blog in blogs
+      div.blog-wrapper
+        a.h3.title(href="/blog/"+blog._id)=blog.title
+        div.container.preview
+          !=blog.body

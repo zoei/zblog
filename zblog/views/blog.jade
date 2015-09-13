@@ -1,0 +1,10 @@
+extends layout
+
+block content
+  div.container-fluid
+    a.h1(href="/")="酌酒花间"
+  div.container
+    div.blog-wrapper
+      h3.title=blog.title
+      div.author=blog.author
+      p.preview!=blog.body

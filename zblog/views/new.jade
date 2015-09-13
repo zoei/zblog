@@ -1,0 +1,21 @@
+extends layout
+
+block content
+  div.container-fluid.header
+    h1= "酌酒花间"
+    |     为追寻它的美
+    p
+      | 无怨无悔
+  div.container
+    form
+      div.form-group
+        label Title
+        input(type="text" class="form-control" id="title" placeholder="Title")
+      div.form-group
+        label Author
+        input(type="text" class="form-control" id="author" placeholder="Title" value="zoei")
+      div.form-group
+        include ./text-editor.jade
+      input(class="btn btn-default" id="sub" type="button" value="Submit")
+  script
+    include new.js

@@ -1,0 +1,21 @@
+.header {
+  background: url("../images/bg.png");
+  background-repeat: no-repeat;
+  background-size: 100%, auto;
+  min-width: 800px;
+  min-height: 300px;
+  color: #fff;
+}
+.blog-wrapper {
+  margin: 30px;
+}
+.blog-wrapper .title {
+  display: block;
+  color: #3c9d87;
+  margin: 30px 0;
+}
+.blog-wrapper .preview {
+  margin: 20px 0;
+  height: 200px;
+  over-flow: hidden;
+}
