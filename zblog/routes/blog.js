@@ -18,7 +18,6 @@ router.get('/new', function(req, res, next) {
 
 router.post('/save', function(req, res, next) {
   var blog;
-  console.log('params', req.body);
   blog = new Blog({
     title: req.body.title,
     author: req.body.author,

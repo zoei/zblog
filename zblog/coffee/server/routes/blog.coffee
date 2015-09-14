@@ -11,7 +11,6 @@ router.get '/new', (req, res, next)->
   res.render 'new'
 
 router.post '/save', (req, res, next)->
-  console.log 'params', req.body
   blog = new Blog
     title: req.body.title
     author: req.body.author

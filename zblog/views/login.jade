@@ -1,0 +1,16 @@
+extends layout
+
+block content
+  .container.login-wrapper
+    form(action="/admin/verify" method="POST")
+      div.form-group
+        label(for="username") User Name
+        input#username.form-control(type="text" name="name" placeholder="User name")
+      div.form-group
+        label(for="user_pwd") Password
+        input#userpwd.form-control(type="password" name="password" placeholder="Password")
+      input#btn-login.btn.btn-default(type="submit" value="Login")
+  //- script
+  //-   include ./built/js/login.js
+  style
+    include ./built/css/login.css

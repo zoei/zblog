@@ -1,8 +1,8 @@
 routes = require './index'
-users = require './users'
+admin = require './admin'
 blog = require './blog'
 
 module.exports.init = (app)->
   app.use '/', routes
-  app.use '/users', users
+  app.use '/admin', admin
   app.use '/blog', blog

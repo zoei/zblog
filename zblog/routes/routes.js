@@ -1,13 +1,13 @@
-var blog, routes, users;
+var admin, blog, routes;
 
 routes = require('./index');
 
-users = require('./users');
+admin = require('./admin');
 
 blog = require('./blog');
 
 module.exports.init = function(app) {
   app.use('/', routes);
-  app.use('/users', users);
+  app.use('/admin', admin);
   return app.use('/blog', blog);
 };

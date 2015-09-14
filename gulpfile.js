@@ -16,61 +16,61 @@ var SRC_DIR = './zblog',
     CLIENT_SCRIPT = CLIENT_DIR + '/scripts',
 
     SERVER_ROUTE = SRC_DIR + '/routes'
-    SERVER_SERVICE = SRC_DIR + '/service';
+    SERVER_SERVICE = SRC_DIR + '/service',
+    SERVER_VIEW_BUILT_STYLE = SRC_DIR + '/views/built/css';
+    SERVER_VIEW_BUILT_JS = SRC_DIR + '/views/built/js';
 
 var server_process;
 var cp = require('child_process');
 
 var tasks = {
-    clean_server: function() {
+    stylus_server: function() {
         del.sync([
-            SERVER_SERVICE,
-            SERVER_ROUTE
+            SERVER_VIEW_BUILT_STYLE
         ], {
             force: true
         });
+        return gulp.src(SRC_STYLUS + '/built/**/*.styl')
+            .pipe(stylus())
+            .pipe(gulp.dest(SERVER_VIEW_BUILT_STYLE));
     },
-    clean_client: function() {
-        del.sync([
-            CLIENT_SCRIPT,
-            CLIENT_STYLE
-        ], {
-            force: true
-        });
-    },
-    clean_client_script: function() {
-        del.sync([
-            CLIENT_SCRIPT
-        ], {
-            force: true
-        });
-    },
-    clean_stylus: function() {
+    stylus_client: function() {
         del.sync([
             CLIENT_STYLE
         ], {
             force: true
         });
-    },
-    stylus: function() {
-        return gulp.src(SRC_STYLUS + '/style.styl')
+        return gulp.src(SRC_STYLUS + '/global/style.styl')
             .pipe(stylus())
             .pipe(gulp.dest(CLIENT_STYLE));
     },
     coffee_server: function() {
+        del.sync([
+            SERVER_SERVICE,
+            SERVER_ROUTE,
+            SERVER_VIEW_BUILT_JS
+        ], {
+            force: true
+        });
         return gulp.src([SRC_COFFEE + '/server/**/*.coffee'])
             .pipe(coffee({bare: true}).on('error', gutil.log))
             .pipe(gulp.dest(SRC_DIR));
     },
     coffee_client: function() {
+        del.sync([
+            CLIENT_SCRIPT
+        ], {
+            force: true
+        });
         return gulp.src([SRC_COFFEE + '/client/**/*.coffee'])
             .pipe(coffee({bare: true}).on('error', gutil.log))
             .pipe(gulp.dest(CLIENT_SCRIPT));
     },
     watch: function() {
         gulp.watch(SRC_COFFEE + '/server/**/*.coffee', ['server', 'restart']);
-        gulp.watch(SRC_COFFEE + '/client/**/*.coffee', ['clean_client_script', 'client']);
-        gulp.watch(SRC_STYLUS + '/**/*.styl', ['clean_stylus', 'stylus']);
+        gulp.watch(SRC_COFFEE + '/client/**/*.coffee', ['client']);
+        gulp.watch(SRC_STYLUS + '/built/**/*.styl', ['stylus_server']);
+        gulp.watch(SRC_STYLUS + '/global/**/*.styl', ['stylus_client']);
     },
     restart: function() {
         var started = false;
@@ -97,16 +97,15 @@ var tasks = {
     }
 };
 
-gulp.task('clean_server', tasks.clean_server);
 gulp.task('coffee_server', tasks.coffee_server);
-gulp.task('server', ['clean_server', 'coffee_server']);
+gulp.task('stylus_server', tasks.stylus_server);
+gulp.task('server', ['coffee_server', 'stylus_server']);
 
-gulp.task('clean_stylus', tasks.clean_stylus);
-gulp.task('clean_client', tasks.clean_client);
 gulp.task('coffee_client', tasks.coffee_client);
-gulp.task('stylus', tasks.stylus);
-gulp.task('client', ['clean_client', 'coffee_client', 'stylus']);
+gulp.task('stylus_client', tasks.stylus_client);
+gulp.task('client', ['coffee_client', 'stylus_client']);
+
+gulp.task('restart', tasks.restart);
 
 gulp.task('watch', ['restart'], tasks.watch);
-gulp.task('restart', tasks.restart);
 gulp.task('default', ['server', 'client']);

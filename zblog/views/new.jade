@@ -15,7 +15,8 @@ block content
         label Author
         input(type="text" class="form-control" id="author" placeholder="Title" value="zoei")
       div.form-group
+        label 文章内容
         include ./text-editor.jade
       input(class="btn btn-default" id="sub" type="button" value="Submit")
   script
-    include new.js
+    include ./built/js/new-blog.js

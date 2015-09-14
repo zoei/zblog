@@ -6,10 +6,9 @@ window.texteditor = $('#text-editor').xheditor({
   internalStyle: false,
   width: '100%',
   height: 200,
-  // loadCSS: 'http://xheditor.com/test.css',
   fullscreen: false,
-  sourceMode:false,
+  sourceMode: false,
   forcePtag: true,
-  upImgUrl:"upload.php",
-  upImgExt:"jpg,jpeg,gif,png"
+  upImgUrl: "upload.php",
+  upImgExt: "jpg,jpeg,gif,png"
 });
