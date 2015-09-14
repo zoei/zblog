@@ -1,4 +1,12 @@
 extends layout
 
 block content
-  label login success
+  style
+    include ./built/css/admin.css
+  .page-admin.container
+    div.nav
+      ul.list-unstyled
+        li Blogs
+        li rights
+    div.content
+      =blogs

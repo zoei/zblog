@@ -1,0 +1,8 @@
+.page-admin div.nav {
+  display: inline-block;
+  width: 100px;
+  border-right: solid 2px #6ce2e7;
+}
+.page-admin div.content {
+  display: inline-block;
+}
