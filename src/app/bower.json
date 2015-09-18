@@ -1,0 +1,20 @@
+{
+  "name": "Zblog",
+  "version": "0.0.0",
+  "homepage": "https://github.com/zoei/zblog",
+  "authors": [
+    "zoei zoei@163.com"
+  ],
+  "main": "index.html",
+  "keywords": [
+    "zblog"
+  ],
+  "license": "MIT",
+  "ignore": [
+    "**/.*",
+    "node_modules",
+    "bower_components",
+    "test",
+    "tests"
+  ]
+}

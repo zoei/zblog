@@ -1,0 +1,13 @@
+#page-console {
+  padding-top: 50px;
+}
+#page-console div.nav {
+  display: inline-block;
+  width: 100px;
+  border-right: solid 2px #6ce2e7;
+  font-size: 17px;
+  color: #808d9c;
+}
+#page-console div.content {
+  display: inline-block;
+}

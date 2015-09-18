@@ -79,7 +79,7 @@ var tasks = {
             cp.exec('killall node');
         }
         server_process = cp.exec('DEBUG=zblog npm start', {
-            cwd: '/home/zoei/git/zblog/zblog'
+            cwd: process.cwd() + '/zblog'
         });
         server_process.stdout.on('data', function(data){
             console.log(data.toString('utf8').trim());
@@ -107,5 +107,5 @@ gulp.task('client', ['coffee_client', 'stylus_client']);
 
 gulp.task('restart', tasks.restart);
 
-gulp.task('watch', ['restart'], tasks.watch);
+gulp.task('watch', ['default', 'restart'], tasks.watch);
 gulp.task('default', ['server', 'client']);

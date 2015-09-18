@@ -1,0 +1,10 @@
+extends ../layout
+
+block content
+  .container
+  each blog in blogs
+    ul.list-unstyled
+      li
+        span.h3.title=blog.title
+        a(href="/admin/blog/delete/"+blog._id) delete
+        a(href="/admin/blog/edit/"+blog._id) edit
