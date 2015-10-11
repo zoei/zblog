@@ -101,15 +101,18 @@ tasks = {
       SRC_CLIENT_SCRIPT_DEPS + '/xheditor/**/*.*',
     ])
     .pipe(gulp.dest(DEST_CLIENT_SCRIPT + '/xheditor'));
-    return gulp.src([
+    var s = gulp.src([
       SRC_CLIENT_SCRIPT_DEPS + '/jquery/dist/jquery.js',
       SRC_CLIENT_SCRIPT_DEPS + '/bootstrap/dist/js/bootstrap.js',
       SRC_CLIENT_SCRIPT_DEPS + '/angular/angular.js',
       SRC_CLIENT_SCRIPT_DEPS + '/angular-route/angular-route.js',
       SRC_CLIENT_SCRIPT_DEPS + '/angular-resource/angular-resource.js',
       SRC_CLIENT_SCRIPT_DEPS + '/angular-animate/angular-animate.js',
-    ])
-    .pipe(concat('deps.js'))
+    ]);
+    if(need_uglify) {
+      s = s.pipe(uglify());
+    }
+    s.pipe(concat('deps.js'))
     .pipe(gulp.dest(DEST_CLIENT_SCRIPT));
   },
   copy_client: function() {
@@ -180,8 +183,7 @@ gulp.task('restart', tasks.restart);
 gulp.task('watch', ['default', 'restart'], tasks.watch);
 gulp.task('default', ['server', 'client']);
 
-gulp.task('c', function(){
-    gulp.src([
-        SRC_SERVER + '/package.json'
-      ]).pipe(gulp.dest(DEST_SERVER + '/package.json'));
+gulp.task('product', function(){
+    need_uglify = true;
 });
+gulp.task('release', ['product', 'default']);
