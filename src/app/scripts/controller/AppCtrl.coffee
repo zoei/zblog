@@ -1,9 +1,8 @@
 angular.module("zblog.controllers").controller "AppCtrl", [
   "$scope"
   '$rootScope'
-  '$route'
-  '$location'
-  ($scope, $rootScope, $route, $location) ->
+  'TokenServ'
+  ($scope, $rootScope, TokenServ) ->
 
     $scope.$on '$locationChangeStart', ->
     $scope.$on '$viewContentLoaded', ->
@@ -22,16 +21,6 @@ angular.module("zblog.controllers").controller "AppCtrl", [
       $scope.currentRoute = currentRoute
 
     $scope.isAuthorized = ->
-      $rootScope.tokenInfo?.access_token
-
-    $scope.hasJoined = (act_id)->
-      return false  unless $rootScope.currentUser
-      return false  if not $rootScope.userActivities or not $rootScope.userActivities.length
-      i = 0
-      while i < $rootScope.userActivities.length
-        activity = $rootScope.userActivities[i]
-        return true if act_id is activity.id
-        i++
-      false
+      TokenServ.get()
 
 ]

@@ -12,6 +12,7 @@
     "express": "~4.13.1",
     "express-mongoose": "^0.1.0",
     "jade": "~1.11.0",
+    "jsonwebtoken": "^5.4.0",
     "mongoose": "^4.1.6",
     "mongoskin": "^1.4.13",
     "morgan": "~1.6.1",

@@ -1,16 +1,8 @@
 angular.module("zblog.controllers").controller "HomeCtrl", [
   "$scope"
-  "$rootScope"
   "BlogServ"
-  ($scope, $rootScope, BlogServ) ->
-
-    $scope.selectBlog = (blog) ->
-      window.location.hash = "#/blog/" + blog.id
-      return
-
-    $scope.getRecentBlogs = ->
-      $scope.blogs = BlogServ.getRecentBlogs count: 20
-      return
+  "AuthServ"
+  ($scope, BlogServ, AuthServ) ->
 
     $scope.blogs = BlogServ.query()
 

@@ -1,7 +1,7 @@
 angular.module("zblog.services").factory "BlogServ", [
   "$resource"
   ($resource) ->
-    $resource "blog/:blogid", {blogid: 'latest'},
+    $resource "blog/:blogid", {blogid: 'list'},
       query:
         params: 
           blogid: 'list'

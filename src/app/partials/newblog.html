@@ -10,11 +10,11 @@
   <form>
     <div class="form-group">
       <label>Title</label>
-      <input type="text" class="form-control" id="title" placeholder="Title"></input>
+      <input type="text" class="form-control" ng-model="title" placeholder="Title"></input>
     </div>
     <div class="form-group">
       <label>Author</label>
-      <input type="text" class="form-control" id="author" placeholder="Title" value="zoei"></input>
+      <input type="text" class="form-control" ng-init="author='zoei'" ng-model="author" placeholder="Author"></input>
     </div>
     <div class="form-group">
       <label>文章内容</label>

@@ -21,6 +21,12 @@ angular.module("zblog", [
     ).when("/newblog",
       templateUrl: "partials/newblog.html"
       controller: "NewBlogCtrl"
+    ).when("/signin",
+      templateUrl: "partials/signin.html"
+      controller: "SigninCtrl"
+    ).when("/signup",
+      templateUrl: "partials/signup.html"
+      controller: "SignupCtrl"
     ).otherwise redirectTo: "/home"
 ]
 
