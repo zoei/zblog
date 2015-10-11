@@ -1,0 +1,39 @@
+@import "slide"
+
+.ng-animate
+  -webkit-animation: 0.4s
+
+.ng-enter
+  &#home, &#user_console
+    &[switched-view="home"], &[switched-view="user_console"], &[switched-view="user_login"]
+      -webkit-animation: 0.0001s
+      
+    &:not([switched-view="home"]):not([switched-view="user_console"]):not([switched-view="user_login"])
+      -webkit-animation-name: slideInLeft
+      
+  &#user_joined
+    &[switched-view="user_console"]
+      -webkit-animation-name: slideInRight
+      
+    &[switched-view="detail"]
+      -webkit-animation-name: slideInLeft
+
+  &#detail
+    -webkit-animation-name: slideInRight
+
+.ng-leave
+  &#home, &#user_console
+    &[switched-view="home"], &[switched-view="user_console"], &[switched-view="user_login"]
+      -webkit-animation: 0.0001s
+
+    &:not([switched-view="home"]):not([switched-view="user_console"]):not([switched-view="user_login"])
+      -webkit-animation-name: slideOutLeft
+
+  &#user_joined
+    &[switched-view="user_console"]
+      -webkit-animation-name: slideOutRight
+    &[switched-view="detail"]
+      -webkit-animation-name: slideOutLeft
+
+  &#detail
+    -webkit-animation-name: slideOutRight

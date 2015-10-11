@@ -1,0 +1,13 @@
+<div class="container-fluid header">
+  <h1>酌酒花间</h1>
+  <h5>即行即景，</h5>
+  <h5>且行且思</h5>
+  <a href="#/newblog">Write Blog</a>
+</div>
+<div class="container">
+  <div ng-repeat="blog in blogs" class="blog-wrapper">
+    <a class="h3 title" href="#/blog/{{blog._id}}">{{blog.title}}</a>
+    <button ng-click="del(blog._id)">x</button>
+    <div html-clip class="preview" text="blog.body"></div>
+  </div>
+</div>

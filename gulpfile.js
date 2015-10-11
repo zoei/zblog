@@ -1,111 +1,187 @@
-var gulp = require('gulp'),
-    del = require('del'),
-    gutil = require('gulp-util'),
-    stylus = require('gulp-stylus'),
-    coffee = require('gulp-coffee'),
-    uglify = require('gulp-uglify');
+var DEST_CLIENT, DEST_CLIENT_SCRIPT, DEST_CLIENT_STYLE, DEST_ROOT, DEST_SERVER, DEST_SERVER_DB, DEST_SERVER_ROUTE, DEST_SERVER_SERVICE, SRC_CLIENT, SRC_CLIENT_SCRIPT, SRC_CLIENT_STYLE, SRC_ROOT, SRC_SERVER, SRC_SERVER_DB, SRC_SERVER_ROUTE, SRC_SERVER_SERVICE, coffee, cp, del, gulp, gutil, need_uglify, server_process, stylus, tasks, uglify, concat, angularFileSort;
 
-var need_uglify = false;
+gulp = require('gulp');
+del = require('del');
+gutil = require('gulp-util');
+stylus = require('gulp-stylus');
+coffee = require('gulp-coffee');
+uglify = require('gulp-uglify');
+concat = require('gulp-concat'),
+angularFileSort = require('gulp-angular-filesort');
 
-var SRC_DIR = './zblog',
-    SRC_STYLUS = SRC_DIR + '/stylus',
-    SRC_COFFEE = SRC_DIR + '/coffee',
+need_uglify = false;
 
-    CLIENT_DIR = SRC_DIR + '/public',
-    CLIENT_STYLE = CLIENT_DIR + '/styles',
-    CLIENT_SCRIPT = CLIENT_DIR + '/scripts',
+SRC_ROOT = './src';
+SRC_CLIENT = SRC_ROOT + '/app';
+SRC_CLIENT_STYLE = SRC_CLIENT + '/styles';
+SRC_CLIENT_SCRIPT = SRC_CLIENT + '/scripts';
+SRC_CLIENT_SCRIPT_DEPS = SRC_CLIENT + '/bower_components';
+SRC_SERVER = SRC_ROOT + '/server';
+SRC_SERVER_ROUTE = SRC_SERVER + '/routes';
+SRC_SERVER_SERVICE = SRC_SERVER + '/service';
+SRC_SERVER_DB = SRC_SERVER + '/db';
 
-    SERVER_ROUTE = SRC_DIR + '/routes'
-    SERVER_SERVICE = SRC_DIR + '/service',
-    SERVER_VIEW_BUILT_STYLE = SRC_DIR + '/views/built/css';
-    SERVER_VIEW_BUILT_JS = SRC_DIR + '/views/built/js';
+DEST_ROOT = './build';
+DEST_SERVER = DEST_ROOT + '/zblog';
+DEST_SERVER_ROUTE = DEST_SERVER + '/routes';
+DEST_SERVER_SERVICE = DEST_SERVER + '/service';
+DEST_SERVER_DB = DEST_SERVER + '/db';
+DEST_CLIENT = DEST_SERVER + '/public';
+DEST_CLIENT_STYLE = DEST_CLIENT + '/styles';
+DEST_CLIENT_SCRIPT = DEST_CLIENT + '/scripts';
 
-var server_process;
-var cp = require('child_process');
+server_process = null;
 
-var tasks = {
-    stylus_server: function() {
-        del.sync([
-            SERVER_VIEW_BUILT_STYLE
-        ], {
-            force: true
-        });
-        return gulp.src(SRC_STYLUS + '/built/**/*.styl')
-            .pipe(stylus())
-            .pipe(gulp.dest(SERVER_VIEW_BUILT_STYLE));
-    },
-    stylus_client: function() {
-        del.sync([
-            CLIENT_STYLE
-        ], {
-            force: true
-        });
-        return gulp.src(SRC_STYLUS + '/global/style.styl')
-            .pipe(stylus())
-            .pipe(gulp.dest(CLIENT_STYLE));
-    },
-    coffee_server: function() {
-        del.sync([
-            SERVER_SERVICE,
-            SERVER_ROUTE,
-            SERVER_VIEW_BUILT_JS
-        ], {
-            force: true
-        });
-        return gulp.src([SRC_COFFEE + '/server/**/*.coffee'])
-            .pipe(coffee({bare: true}).on('error', gutil.log))
-            .pipe(gulp.dest(SRC_DIR));
-    },
-    coffee_client: function() {
-        del.sync([
-            CLIENT_SCRIPT
-        ], {
-            force: true
-        });
-        return gulp.src([SRC_COFFEE + '/client/**/*.coffee'])
-            .pipe(coffee({bare: true}).on('error', gutil.log))
-            .pipe(gulp.dest(CLIENT_SCRIPT));
-    },
-    watch: function() {
-        gulp.watch(SRC_COFFEE + '/server/**/*.coffee', ['server', 'restart']);
-        gulp.watch(SRC_COFFEE + '/client/**/*.coffee', ['client']);
-        gulp.watch(SRC_STYLUS + '/built/**/*.styl', ['stylus_server']);
-        gulp.watch(SRC_STYLUS + '/global/**/*.styl', ['stylus_client']);
-    },
-    restart: function() {
-        var started = false;
-        if (server_process) {
-            started = false;
-            cp.exec('killall node');
-        }
-        server_process = cp.exec('DEBUG=zblog npm start', {
-            cwd: process.cwd() + '/zblog'
-        });
-        server_process.stdout.on('data', function(data){
-            console.log(data.toString('utf8').trim());
-        });
-        server_process.stderr.on('data', function(data){
-            if (!started) return;
-            console.error(data.toString('utf8').trim());
-        });
-        server_process.on('exit', function(code, signal){
-            started = false;
-            console.log(code, signal);
-        });
-        console.log('server restarted');
-        started = true;
+cp = require('child_process');
+
+tasks = {
+  coffee_server: function() {
+    del.sync([DEST_SERVER_SERVICE, DEST_SERVER_ROUTE, DEST_SERVER_DB], {
+      force: true
+    });
+    gulp.src([SRC_SERVER + '/**/*.coffee']).pipe(coffee({
+      bare: true
+    }).on('error', gutil.log)).pipe(gulp.dest(DEST_SERVER));
+  },
+  copy_server: function() {
+    del.sync([
+        DEST_SERVER + '/bin',
+        DEST_SERVER + '/node_modules',
+        DEST_SERVER + '/views',
+        DEST_SERVER + '/app.js',
+        DEST_SERVER + '/package.json',
+      ], {
+      force: true
+    });
+    gulp.src([
+        SRC_SERVER + '/bin/**'
+      ]).pipe(gulp.dest(DEST_SERVER + '/bin'));
+    gulp.src([
+        SRC_SERVER + '/views/**/*.*'
+      ]).pipe(gulp.dest(DEST_SERVER + '/views'));
+    gulp.src([
+        SRC_SERVER + '/node_modules/**/*.*'
+      ]).pipe(gulp.dest(DEST_SERVER + '/node_modules'));
+    gulp.src([
+        SRC_SERVER + '/app.js'
+      ]).pipe(gulp.dest(DEST_SERVER));
+    gulp.src([
+        SRC_SERVER + '/package.json'
+      ]).pipe(gulp.dest(DEST_SERVER));
+    gulp.src([
+        SRC_SERVER + '/config.json'
+      ]).pipe(gulp.dest(DEST_SERVER));
+  },
+  stylus_client: function() {
+    del.sync([DEST_CLIENT_STYLE], {
+      force: true
+    });
+    return gulp.src(SRC_CLIENT_STYLE + '/zblog.styl').pipe(stylus()).pipe(gulp.dest(DEST_CLIENT_STYLE));
+  },
+  style_deps_client: function() {
+    return gulp.src([
+      SRC_CLIENT_SCRIPT_DEPS + '/bootstrap/dist/css/bootstrap.css'
+    ])
+    .pipe(concat('deps.css'))
+    .pipe(gulp.dest(DEST_CLIENT_STYLE));
+  },
+  coffee_client: function() {
+    del.sync([DEST_CLIENT_SCRIPT], {
+      force: true
+    });
+    return gulp.src([SRC_CLIENT_SCRIPT + '/**/*.coffee']).pipe(coffee({
+      bare: true
+    }).on('error', gutil.log))
+    .pipe(angularFileSort())
+    .pipe(concat('zblog.js'))
+    .pipe(gulp.dest(DEST_CLIENT_SCRIPT));
+  },
+  script_deps_client: function() {
+    gulp.src([
+      SRC_CLIENT_SCRIPT_DEPS + '/xheditor/**/*.*',
+    ])
+    .pipe(gulp.dest(DEST_CLIENT_SCRIPT + '/xheditor'));
+    return gulp.src([
+      SRC_CLIENT_SCRIPT_DEPS + '/jquery/dist/jquery.js',
+      SRC_CLIENT_SCRIPT_DEPS + '/bootstrap/dist/js/bootstrap.js',
+      SRC_CLIENT_SCRIPT_DEPS + '/angular/angular.js',
+      SRC_CLIENT_SCRIPT_DEPS + '/angular-route/angular-route.js',
+      SRC_CLIENT_SCRIPT_DEPS + '/angular-resource/angular-resource.js',
+      SRC_CLIENT_SCRIPT_DEPS + '/angular-animate/angular-animate.js',
+    ])
+    .pipe(concat('deps.js'))
+    .pipe(gulp.dest(DEST_CLIENT_SCRIPT));
+  },
+  copy_client: function() {
+    del.sync([
+        DEST_CLIENT + '/index.html',
+        DEST_CLIENT + '/favicon.ico',
+        DEST_CLIENT + '/partials',
+        DEST_CLIENT + '/images'
+      ], {
+      force: true
+    });
+    gulp.src([
+        SRC_CLIENT + '/partials/**/*.*'
+      ]).pipe(gulp.dest(DEST_CLIENT + '/partials'));
+    gulp.src([
+        SRC_CLIENT + '/images/**/*.*'
+      ]).pipe(gulp.dest(DEST_CLIENT + '/images'));
+    gulp.src([
+        SRC_CLIENT + '/index.html',
+        SRC_CLIENT + '/favicon.ico'
+      ]).pipe(gulp.dest(DEST_CLIENT));
+  },
+  watch: function() {
+    gulp.watch([SRC_SERVER_ROUTE + '/**/*.coffee', SRC_SERVER_SERVICE + '/**/*.coffee'], ['coffee_server', 'restart']);
+    gulp.watch(SRC_CLIENT_SCRIPT + '/**/*.coffee', ['coffee_client']);
+    return gulp.watch(SRC_CLIENT_STYLE + '/**/*.styl', ['stylus_client']);
+  },
+  restart: function() {
+    var started;
+    started = false;
+    if (server_process) {
+      started = false;
+      cp.exec('killall node');
     }
+    server_process = cp.exec('DEBUG=zblog npm start', {
+      cwd: process.cwd() + DEST_ROOT
+    });
+    server_process.stdout.on('data', function(data) {
+      return console.log(data.toString('utf8').trim());
+    });
+    server_process.stderr.on('data', function(data) {
+      if (!started) {
+        return;
+      }
+      return console.error(data.toString('utf8').trim());
+    });
+    server_process.on('exit', function(code, signal) {
+      started = false;
+      return console.log(code, signal);
+    });
+    console.log('server restarted');
+    return started = true;
+  }
 };
 
 gulp.task('coffee_server', tasks.coffee_server);
-gulp.task('stylus_server', tasks.stylus_server);
-gulp.task('server', ['coffee_server', 'stylus_server']);
+gulp.task('copy_server', tasks.copy_server);
+gulp.task('server', ['coffee_server', 'copy_server']);
 
 gulp.task('coffee_client', tasks.coffee_client);
+gulp.task('script_deps_client', tasks.script_deps_client);
 gulp.task('stylus_client', tasks.stylus_client);
-gulp.task('client', ['coffee_client', 'stylus_client']);
+gulp.task('style_deps_client', tasks.style_deps_client);
+gulp.task('copy_client', tasks.copy_client);
+gulp.task('client', ['coffee_client', 'script_deps_client', 'stylus_client', 'style_deps_client', 'copy_client']);
 
 gulp.task('restart', tasks.restart);
-
 gulp.task('watch', ['default', 'restart'], tasks.watch);
 gulp.task('default', ['server', 'client']);
+
+gulp.task('c', function(){
+    gulp.src([
+        SRC_SERVER + '/package.json'
+      ]).pipe(gulp.dest(DEST_SERVER + '/package.json'));
+});
